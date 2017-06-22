@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Status;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -34,7 +35,8 @@ class UsersController extends Controller
     public function show($id)
     {
         $user = User::findOrFail($id);
-        return view('users.show', compact('user'));
+        $statuses = $user->statuses()->orderBy('created_at', 'desc')->paginate(20);
+        return view('users.show', compact('user', 'statuses'));
     }
 
     public function store(Request $request)
@@ -114,4 +116,6 @@ class UsersController extends Controller
         session()->flash('success', '恭喜您，激活成功');
         return redirect()->route('users.show', [$user]);
     }
+
+
 }
